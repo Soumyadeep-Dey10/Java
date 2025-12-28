@@ -49,4 +49,46 @@ public class UserController {
     public List<User> getUsers() {
         return new ArrayList<>(map.values());
     }
+
+
+    //READ by individual id
+    //required = false, for optional parameters
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUser(@PathVariable (value = "userId", required = false) int id){
+        if(!map.containsKey(id)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(map.get(id));
+    }
+
+//@GetMapping({"/users","/user/{id}"}) //alternate to map both url
+
+
+    //Find orders by particular user and orderid
+    @GetMapping("{userId}/order/{orderId}")
+    public ResponseEntity<User> getUserOrder(@PathVariable("userId")int id, @PathVariable int orderId){
+        if(!map.containsKey(id)){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.ok(map.get(id));
+    }
+
+
+    //search api
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> searchUser(@RequestParam(required = false) String name){
+        System.out.println(name);
+        List<User> users = map.values().stream()
+                .filter(u -> u.getName().equalsIgnoreCase(name))
+                .toList();
+        return  ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/info/{id}")
+    public String getInfo(@PathVariable int id,
+                          @RequestParam String name,
+                          @RequestHeader("User-Agent") String userAgent){
+        return id+" "+name+ " "+userAgent;
+    }
 }
